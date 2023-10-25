@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const { PORT } = require("./config/serverConfig");
 // const apiRoutes = require("./routes/index");
 
-const { sendBasicEmail } = require("./services/email-service");
+// const { sendBasicEmail } = require("./services/email-service");
 
 const db = require("./models/index");
 
