@@ -5,9 +5,12 @@ const { PORT } = require("./config/serverConfig");
 const apiRoutes = require("./routes/index");
 
 const setupJobs = require("./utils/cronjob");
-// const { sendBasicEmail } = require("./services/email-service");
 
 const db = require("./models/index");
+
+const EmailService = require("./services/email-service");
+const { REMINDER_BINDING_KEY } = require("./config/serverConfig");
+const { subscribeChannel, createChannel } = require("./utils/messageQueue");
 
 const setUpAndStartServer = async () => {
   const app = express();
@@ -17,13 +20,10 @@ const setUpAndStartServer = async () => {
 
   app.use("/api", apiRoutes);
 
+  const channel = await createChannel();
+  subscribeChannel(channel, EmailService.subscribeEvents, REMINDER_BINDING_KEY);
+
   app.listen(PORT, async () => {
-    // sendBasicEmail(
-    //   "support@gmail.com",
-    //   "vishnumouli0@gmail.com",
-    //   "This is the testing mail for Airline Management System",
-    //   "Hello How's it going?"
-    // );
     setupJobs();
     console.log(`Server Started at Port: ${PORT}`);
     if (process.env.DB_SYNC) {
